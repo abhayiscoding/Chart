@@ -1,0 +1,391 @@
+/* ========================================
+   TRADINGVIEW CHART CLONE - STYLESHEET
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Color palette - refined dark theme */
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --border-color: #30363d;
+    --text-primary: #c9d1d9;
+    --text-secondary: #8b949e;
+    --accent-green: #3fb950;
+    --accent-red: #da3633;
+    --accent-yellow: #d29922;
+    --accent-blue: #58a6ff;
+    --grid-color: rgba(48, 54, 61, 0.3);
+    --hover-overlay: rgba(88, 166, 255, 0.1);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'JetBrains Mono', 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+}
+
+.chart-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-primary);
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 10;
+}
+
+.symbol-info {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    min-height: 2rem;
+}
+
+.symbol {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+}
+
+.ohlcv-display {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.ohlcv-display.active {
+    opacity: 1;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-upload {
+    padding: 0.5rem 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.btn-upload:hover {
+    background: var(--accent-blue);
+    color: var(--bg-primary);
+    border-color: var(--accent-blue);
+}
+
+.btn-upload:active {
+    transform: scale(0.95);
+}
+
+/* ========================================
+   CHART WRAPPER & CANVASES
+   ======================================== */
+
+.chart-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-primary);
+}
+
+.price-chart-container {
+    flex: 3;
+    position: relative;
+    background: var(--bg-primary);
+}
+
+.volume-chart-container {
+    flex: 1;
+    position: relative;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.price-canvas,
+.volume-canvas {
+    background: var(--bg-primary);
+    cursor: crosshair;
+}
+
+.volume-canvas {
+    background: var(--bg-secondary);
+}
+
+/* ========================================
+   AXES & LABELS
+   ======================================== */
+
+.price-axis-label {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 60px;
+    padding: 0.25rem 0.5rem;
+    background: var(--bg-tertiary);
+    border-left: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-blue);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: right;
+    opacity: 0;
+    pointer-events: none;
+    font-family: 'Courier New', monospace;
+    transition: opacity 0.1s ease;
+    z-index: 5;
+}
+
+.price-axis-label.active {
+    opacity: 1;
+}
+
+.time-axis {
+    height: 30px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    overflow: hidden;
+    position: relative;
+    z-index: 3;
+}
+
+.time-label {
+    position: absolute;
+    display: inline-block;
+    min-width: fit-content;
+    padding: 0 4px;
+    font-family: 'Courier New', monospace;
+    white-space: nowrap;
+}
+
+/* ========================================
+   CROSSHAIR & TOOLTIP
+   ======================================== */
+
+.crosshair {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 4;
+    transition: opacity 0.1s ease;
+}
+
+.crosshair.vertical {
+    width: 1px;
+    height: 100%;
+    background: var(--accent-blue);
+    box-shadow: 0 0 8px rgba(88, 166, 255, 0.3);
+}
+
+.crosshair.horizontal {
+    height: 1px;
+    width: 100%;
+    background: var(--accent-blue);
+    box-shadow: 0 0 8px rgba(88, 166, 255, 0.3);
+}
+
+.crosshair.active {
+    opacity: 0.6;
+}
+
+.tooltip {
+    position: absolute;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--accent-blue);
+    border-radius: 6px;
+    padding: 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-family: 'Courier New', monospace;
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    z-index: 6;
+    line-height: 1.4;
+}
+
+.tooltip.active {
+    opacity: 1;
+}
+
+.tooltip-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+}
+
+.tooltip-label {
+    color: var(--text-secondary);
+    min-width: 2.5rem;
+    font-weight: 600;
+}
+
+.tooltip-value {
+    color: var(--accent-blue);
+    font-weight: 700;
+}
+
+/* ========================================
+   SCROLLBAR
+   ======================================== */
+
+.scrollbar-container {
+    height: 12px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    position: relative;
+}
+
+.scrollbar-track {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-secondary);
+    position: relative;
+    cursor: pointer;
+}
+
+.scrollbar-thumb {
+    height: 100%;
+    background: var(--accent-blue);
+    border-radius: 4px;
+    opacity: 0.5;
+    position: absolute;
+    transition: opacity 0.2s ease;
+}
+
+.scrollbar-thumb:hover {
+    opacity: 0.7;
+}
+
+.scrollbar-thumb:active {
+    opacity: 0.9;
+}
+
+/* ========================================
+   ERROR MESSAGE
+   ======================================== */
+
+.error-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-tertiary);
+    border: 2px solid var(--accent-red);
+    border-radius: 8px;
+    padding: 2rem;
+    color: var(--accent-red);
+    font-size: 0.9rem;
+    text-align: center;
+    max-width: 400px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+    transition: opacity 0.3s ease;
+}
+
+.error-message.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ========================================
+   RESPONSIVE & ANIMATIONS
+   ======================================== */
+
+@media (max-width: 768px) {
+    .symbol {
+        font-size: 1.2rem;
+    }
+
+    .ohlcv-display {
+        font-size: 0.75rem;
+    }
+
+    .chart-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .price-axis-label {
+        width: 50px;
+        font-size: 0.7rem;
+    }
+
+    .time-axis {
+        height: 25px;
+        font-size: 0.7rem;
+    }
+
+    .tooltip {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+}
+
+/* Prevent text selection during interactions */
+.chart-wrapper {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Smooth scrolling feel */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}

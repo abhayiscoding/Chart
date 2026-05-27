@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradingView Chart Clone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header with symbol and info -->
+    <div class="chart-header">
+        <div class="symbol-info">
+            <button>
+                <span class="symbol">XAUUSD</span>
+            </button>
+            <span class="ohlcv-display" id="ohlcvDisplay"></span>
+        </div>
+        <div class="controls">
+            <label>
+                <input type="file" id="csvUpload" accept=".csv" style="display:none;">
+                <span class="btn-upload">📁 Load CSV</span>
+            </label>
+        </div>
+    </div>
+    
+    <div class="chart-container">
+        <!-- Main chart wrapper -->
+        <div class="chart-wrapper">
+            <!-- Price chart canvas -->
+            <div class="price-chart-container">
+                <canvas id="priceCanvas" class="price-canvas"></canvas>
+                <div class="price-axis-label" id="priceAxisLabel"></div>
+            </div>
+            <!-- Volume chart canvas -->
+            <div class="volume-chart-container">
+                <canvas id="volumeCanvas" class="volume-canvas"></canvas>
+            </div>
+            <!-- Time axis labels -->
+            <div class="time-axis" id="timeAxis"></div>
+            <!-- Crosshair overlay -->
+            <div class="crosshair vertical" id="crosshairV"></div>
+            <div class="crosshair horizontal" id="crosshairH"></div>
+            <!-- Tooltip -->
+            <div class="tooltip" id="tooltip"></div>
+            <!-- Error message -->
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <!-- Horizontal scrollbar (optional visual indicator) -->
+        <div class="scrollbar-container">
+            <div class="scrollbar-track">
+                <div class="scrollbar-thumb" id="scrollbarThumb"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
